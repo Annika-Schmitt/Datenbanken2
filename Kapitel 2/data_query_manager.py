@@ -12,5 +12,31 @@ data = cursor.execute('''SELECT * FROM Books''')
 for row in data:
     print(row)
 
+# Further queries:
+# Gebe alle Titel aus, deren AutorID mit 'CF' anfängt
+print("Authors starting with CF")
+data = cursor.execute('''SELECT Title FROM Books WHERE AuthorID LIKE "CF%"''')
+for row in data:
+    print(row)
+
+# Gebe alle Inhalte der Books Tabelle in alphabetisch sortierte Reihenfolge nach BookID aus
+print("Ordering the contents of Books table")
+data = cursor.execute('''SELECT * FROM Books ORDER BY BookID''')
+for row in data:
+    print(row)
+
+# Gebe alle Buchtitel des Genre 'Fiction' aus
+print("Titles that belong to Genre = Fiction")
+data = cursor.execute('''SELECT Title FROM Books INNER JOIN Info ON Books.BookID = Info.BookID''')
+for row in data:
+    print(row)
+
+# Welcher Verlag existiert am längsten ('Year Established’)
+print("Publishing House with min. Year Established")
+data = cursor.execute('''SELECT Publishing House, MIN(Year Established) FROM Publisher''')
+for row in data:
+    print(row)
+
+
 connection.commit()
 connection.close()
