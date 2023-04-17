@@ -1,21 +1,34 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
 
 class Book(Base):
-    __tablename__ = "Books"
-    book_id = Column(String, primary_key=True)
-    author_id = Column(String, ForeignKey("author.author_id"))
-    title = Column(String)
+    __tablename__ = "Book"
+    BookID = Column(String, primary_key=True)
+    Title = Column(String)
+    AuthorID = Column(String, ForeignKey("Author.AuthorID"))
 
 
 class Author(Base):
     __tablename__ = "Author"
-    author_id = Column(String, primary_key=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    birthday = Column(String)
-    country = Column(String)
+    AuthorID = Column(String, primary_key=True)
+    FirstName = Column(String)
+    LastName = Column(String)
+    Birthday = Column(String)
+    Country = Column(String)
+
+
+class Info(Base):
+    __tablename__ = "Info"
+    BookID = Column(String, primary_key=True)
+    Genre = Column(String)
+
+class Publisher(Base):
+    __tablename__ = "Publisher"
+    PublisherID = Column(String, primary_key=True)
+    PublishingHouse = Column(String)
+    State = Column(String)
+    Country = Column(String)
+    YearEstablished = Column(String)
