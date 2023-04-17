@@ -8,7 +8,7 @@ connection = sqlite3.connect("bookstore.db")
 cursor = connection.cursor()
 
 # Creating new table "book"
-table = """ CREATE TABLE IF NOT EXISTS Books (
+table = """ CREATE TABLE IF NOT EXISTS Book (
             BookID TEXT PRIMARY KEY,
             Title TEXT,
             AuthorID TEXT,
@@ -27,21 +27,26 @@ print(table_list)
 connection.commit()
 
 # Insert data into table (one row only)
-cursor.execute("""INSERT INTO Books (BookID, Title, AuthorID)
+cursor.execute("""INSERT INTO Book (BookID, Title, AuthorID)
                     VALUES
                         ("BB196", "Ballinby Boys", "AM329");
                """)
 
-book_entries = [row for row in cursor.execute("SELECT * FROM Books")]
+book_entries = [row for row in cursor.execute("SELECT * FROM Book")]
 print(book_entries)
 
 # Insert multiple rows into table
-book_csv = pd.read_csv('data/bookstore/book.csv')
-book_csv.to_sql('Books', connection, if_exists='replace', index=False)
+book_csv = pd.read_csv('data//book.csv', sep=";")
+book_csv.to_sql('Book', connection, if_exists='replace', index=False)
 
-cursor.execute("SELECT * FROM Books")
-for row in cursor.fetchall():
-    print(row)
+author_csv = pd.read_csv('data//author.csv', sep=";")
+author_csv.to_sql('Author', connection, if_exists='replace', index=False)
+
+publisher_csv = pd.read_csv('data//publisher.csv', sep=";")
+publisher_csv.to_sql('Publisher', connection, if_exists='replace', index=False)
+
+info_csv = pd.read_csv('data//info.csv', sep=";")
+info_csv.to_sql('Info', connection, if_exists='replace', index=False)
 
 # Commit and close the connection
 connection.commit()

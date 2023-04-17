@@ -7,11 +7,11 @@ connection = sqlite3.connect("bookstore.db")
 cursor = connection.cursor()
 
 # Update Data
-cursor.execute('''UPDATE Books SET Title = 'Thatchwork Cottage 2' WHERE BookID = "TC188"''')
+cursor.execute('''UPDATE Book SET Title = 'Thatchwork Cottage 2' WHERE BookID = "TC188"''')
 
 # Display data
 print("Books Table: ")
-data = cursor.execute('''SELECT * FROM Books WHERE Title = "'Thatchwork Cottage 2"''')
+data = cursor.execute('''SELECT * FROM Book WHERE Title = "'Thatchwork Cottage 2"''')
 for row in data:
     print(row)
 
