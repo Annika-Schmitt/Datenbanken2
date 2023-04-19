@@ -22,7 +22,6 @@ try:
 
     # disable autocommit mode
     connection.autocommit = False
-
     cursor = connection.cursor()
 
     # write query as part of a transaction
@@ -31,6 +30,8 @@ try:
     rows = cursor.fetchall()
     for row in rows:
         print(row[0])
+
+    cursor.execute("""UPDATE title SET rental_duration = 3 WHERE rental_duration = 2""")
 
     # committing changes
     connection.commit()
@@ -53,20 +54,59 @@ connection = psycopg2.connect("dbname='dvdrental' user='postgres' host='localhos
 # transaction 1
 with connection:
     with connection.cursor() as cursor:
-        cursor.execute("""SELECT title FROM film WHERE rental_duration = 3""")
+        cursor.execute("""SELECT title FROM film WHERE rental_duration = 2""")
+        # transaction 1 has started
         rows = cursor.fetchall()
         for row in rows:
             print(row[0])
+
+        cursor.execute("""UPDATE film SET rental_duration = 3 WHERE rental_duration = 2""")
+        # will be executed within transaction 1
+
 
 # transaction 2
 with connection:
     with connection.cursor() as cursor:
         cursor.execute("""SELECT title FROM film WHERE rental_duration = 5""")
+        # transaction 2 has started
         rows = cursor.fetchall()
         for row in rows:
             print(row[0])
 
+        cursor.execute("""UPDATE film SET rental_duration = 4 WHERE rental_duration = 5""")
+        # will be executed within transaction 2
+
 connection.close()
+
+# Two-Phase Commit Protocol
+try:
+    # establish a connection to the database
+    connection = psycopg2.connect("dbname='dvdrental' user='postgres' host='localhost' port='5432' password='postgres'")
+
+    # get transaction ID
+    xid = connection.xid(235, "global235", "branch")
+
+    # BEGIN transaction
+    connection.tpc_begin(xid)
+
+    # PREPARE transaction
+    connection.tpc_prepare()
+
+    # COMMIT if no exception was raised
+    connection.tpc_commit(xid)
+
+except (Exception, psycopg2.DatabaseError) as error:
+    print("Error in transaction, reverting all changes using rollback ", error)
+    # ROLLBACK if error happened
+    connection.tpc_rollback(xid)
+
+finally:
+    # closing database connection.
+    if connection:
+        cursor.close()
+        connection.close()
+        print("PostgreSQL database connection is closed")
+
 
 # Setting the isolation level
 connection = psycopg2.connect("dbname='dvdrental' user='postgres' host='localhost' port='5432' password='postgres'")
