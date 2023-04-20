@@ -31,7 +31,7 @@ try:
     for row in rows:
         print(row[0])
 
-    cursor.execute("""UPDATE title SET rental_duration = 3 WHERE rental_duration = 2""")
+    cursor.execute("""UPDATE film SET rental_duration = 3 WHERE rental_duration = 2""")
 
     # committing changes
     connection.commit()
@@ -86,8 +86,12 @@ try:
     # get transaction ID
     xid = connection.xid(235, "global235", "branch")
 
-    # BEGIN transaction
+    # BEGIN transaction (all queries afterwards are part of same transaction)
     connection.tpc_begin(xid)
+
+    cursor = connection.cursor()
+    cursor.execute("""SELECT title FROM film WHERE rental_duration = 4""")
+    cursor.execute("""UPDATE film SET rental_duration = 4 WHERE rental_duration = 5""")
 
     # PREPARE transaction
     connection.tpc_prepare()
