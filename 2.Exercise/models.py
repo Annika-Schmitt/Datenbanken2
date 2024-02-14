@@ -4,8 +4,8 @@ from sqlalchemy import Column, String, ForeignKey
 Base = sqlalchemy.orm.declarative_base()
 
 
-class Book(Base):
-    __tablename__ = "Book"
+class Books(Base):
+    __tablename__ = "Books"
     BookID = Column(String, primary_key=True)
     Title = Column(String)
     AuthorID = Column(String, ForeignKey("Author.AuthorID"))
