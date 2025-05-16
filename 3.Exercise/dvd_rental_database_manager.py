@@ -12,13 +12,13 @@ cursor = connection.cursor()
 # Writing transactions with try-except-block
 try:
     # write the transaction query
-    cursor.execute("""INSERT INTO city (postal_code, city, country_code) 
-                        VALUES (74072, 'Heilbronn', DE) """)
+    cursor.execute("""INSERT INTO city (city_id, city, country_id) 
+                        VALUES (99, 'Berlin', 38) """)
     connection.commit()
 
 except (Exception, psycopg2.DatabaseError) as error:
     # in case of an error rollback all changes done before
-    print(error)
+    print("Transaction failed with error: ", error)
     connection.rollback()
 
 # finally:
@@ -37,8 +37,8 @@ with connection:
         cursor.execute("""UPDATE film SET rental_duration = 3 WHERE rental_duration = 2""")
         cursor.execute("""SELECT title FROM film WHERE rental_duration = 3""")
         rows = cursor.fetchall()
-        for row in rows:
-            print(row[0])
+        #for row in rows:
+        #    print(row[0])
 
 
 # transaction 2
@@ -47,8 +47,8 @@ with connection:
         cursor.execute("""SELECT title FROM film WHERE rental_duration = 5""")
         # transaction 2 has started
         rows = cursor.fetchall()
-        for row in rows:
-            print(row[0])
+        #for row in rows:
+        #    print(row[0])
 
         cursor.execute("""UPDATE film SET rental_duration = 4 WHERE rental_duration = 5""")
         # will be executed within transaction 2
@@ -92,6 +92,10 @@ else:
     # if connection:
     #     cursor.close()
     #    connection.close()
+
+# In case of error: "Error in transaction, reverting all changes using rollback  prepared transactions are disabled",
+# adjust the postgresql.conf file and set parameter max_prepared_transactions to a value > 2.
+# Afterwards restart the DB server in PgAdmin
 
 # Setting the isolation level
 connection = psycopg2.connect("dbname='dvdrental' user='postgres' host='localhost' port='5432' password='postgres'")
